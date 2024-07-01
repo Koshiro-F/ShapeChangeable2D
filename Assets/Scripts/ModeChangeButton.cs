@@ -16,6 +16,14 @@ public class ModeChangeButton : MonoBehaviour
         change_button = GetComponent<Button>();
         change_button.onClick.AddListener(ChangeMode);
         GM = GameObject.Find("GameManager").GetComponent<GameManager>();
+        if(GM.isAuto)
+        {
+            record_button.interactable = false;
+        }
+        else
+        {
+            record_button.interactable = true;
+        }
     }
 
     public void ChangeMode()

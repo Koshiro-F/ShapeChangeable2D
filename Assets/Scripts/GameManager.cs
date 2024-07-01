@@ -149,7 +149,7 @@ public class GameManager : MonoBehaviour
         {
             RouterOff(num1);
         }
-        AddEvent();
+        if(isAuto) AddEvent();
     }
 
     public void CordinaterOff(int numc)//コーディネータを切断する（クリックに起因）
