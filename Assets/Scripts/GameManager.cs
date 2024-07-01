@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
     }
     void Update()
     {
-        time += Time.deltaTime;
+        time += 1000*Time.deltaTime;
     }
 
     public void CountCordinaters()
