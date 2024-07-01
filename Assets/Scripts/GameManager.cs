@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < numPixels; i++)
         {
-            Instantiate(pixelPrefab, new Vector3(2*i - numPixels/2, 0, 0), Quaternion.identity);//ピクセルの生成
+            Instantiate(pixelPrefab, new Vector3(2*i - 3 - numPixels/2, 0, 0), Quaternion.identity);//ピクセルの生成
         }
         pixels = GameObject.FindGameObjectsWithTag("Pixel");
         int count = 0;
