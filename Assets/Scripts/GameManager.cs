@@ -16,19 +16,19 @@ public class GameManager : MonoBehaviour
     private List<List<int>> connections = new List<List<int>>();
     private float time = 0.0f;
 
-    public int numPixels = 5;
-    public int maxCordinaters = 1;
+    public int numPixels = 5;//生成するピクセルの数
+    public int maxCordinaters = 1;//最大コーディネータ数
     public int numCordinaters = 0;
     public bool isAuto = false;
 
     private JsonController<LogicJsonObject> JC;
-    private LogicJsonObject logicJsonObject;
+    private LogicJsonObject logicJsonObject;//LogicJsonのオブジェクト
     // Start is called before the first frame update
     void Start()
     {
         for (int i = 0; i < numPixels; i++)
         {
-            Instantiate(pixelPrefab, new Vector3(2*i - numPixels/2, 0, 0), Quaternion.identity);
+            Instantiate(pixelPrefab, new Vector3(2*i - numPixels/2, 0, 0), Quaternion.identity);//ピクセルの生成
         }
         pixels = GameObject.FindGameObjectsWithTag("Pixel");
         int count = 0;
@@ -37,6 +37,10 @@ public class GameManager : MonoBehaviour
         {
             Pixel pix = pixel.GetComponent<Pixel>();
             pix.number = count;
+            if(count == 0)//最初のピクセルをコーディネータにする
+            {
+                pix.isCordinater = true;
+            }
             Array.Resize(ref instinfo, count + 1);
             instinfo[count] = new InstanceInfo();
             instinfo[count].instance_id = count;
@@ -82,7 +86,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    public void CordinaterToRouter(int numc, int numr)
+    public void CordinaterToRouter(int numc, int numr)//cordinaterとrouterの接続
     {
         Pixel pixc = pixels[numc].GetComponent<Pixel>();
         Pixel pixr = pixels[numr].GetComponent<Pixel>();
@@ -106,7 +110,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void RouterToRouter(int numr1, int numr2)
+    public void RouterToRouter(int numr1, int numr2)//router間の接続
     {
         Pixel pixr1 = pixels[numr1].GetComponent<Pixel>();
         Pixel pixr2 = pixels[numr2].GetComponent<Pixel>();
@@ -114,6 +118,7 @@ public class GameManager : MonoBehaviour
         pixr2.connected = true;
         if (!connections[numr1].Contains(numr2)) connections[numr1].Add(numr2);
         if (!connections[numr2].Contains(numr1)) connections[numr2].Add(numr1);
+        else return;
         foreach (var connection in connections)
         {
             foreach (var num in connection)
@@ -128,7 +133,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void ConnectionOff(int num1, int num2)
+    public void ConnectionOff(int num1, int num2)//接続を切断する
     {
         connections[num1].Remove(num2);
         connections[num2].Remove(num1);
@@ -144,9 +149,10 @@ public class GameManager : MonoBehaviour
         {
             RouterOff(num1);
         }
+        AddEvent();
     }
 
-    public void CordinaterOff(int numc)
+    public void CordinaterOff(int numc)//コーディネータを切断する（クリックに起因）
     {
         Pixel pixc = pixels[numc].GetComponent<Pixel>();
         pixc.DisableCollider();
@@ -173,7 +179,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void RouterOff(int numr)
+    private void RouterOff(int numr)//routerを切断する
     {
         Pixel pixr = pixels[numr].GetComponent<Pixel>();
         pixr.connected = false;
@@ -191,7 +197,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void AddEvent()
+    public void AddEvent()//JSONにイベントを追加
     {
         logicJsonObject.number_of_events++;
         Array.Resize(ref logicJsonObject.events, logicJsonObject.number_of_events);
@@ -209,6 +215,23 @@ public class GameManager : MonoBehaviour
                 Array.Resize(ref logicJsonObject.events[logicJsonObject.number_of_events - 1].instances[i].neighbor, logicJsonObject.events[logicJsonObject.number_of_events - 1].instances[i].neighbor.Length + 1);
                 logicJsonObject.events[logicJsonObject.number_of_events - 1].instances[i].neighbor[logicJsonObject.events[logicJsonObject.number_of_events - 1].instances[i].neighbor.Length - 1] = connection;
             }
+        }
+        JC.UpdateJsonFile(logicJsonObject);
+    }
+
+    public void Quit()//終了時にゼロ行列を追加する。。。はずだったが、終了時にcolliderが消えるせいでConnectionOffが呼ばれるので必要ないかも
+    {
+        logicJsonObject.number_of_events++;
+        Array.Resize(ref logicJsonObject.events, logicJsonObject.number_of_events);
+        logicJsonObject.events[logicJsonObject.number_of_events - 1] = new LogicEvent();
+        logicJsonObject.events[logicJsonObject.number_of_events - 1].timer = (int)time;
+        logicJsonObject.events[logicJsonObject.number_of_events - 1].instances = new Instance[0];
+        for (int i = 0; i < pixels.Length; i++)
+        {
+            Array.Resize(ref logicJsonObject.events[logicJsonObject.number_of_events - 1].instances, i + 1);
+            logicJsonObject.events[logicJsonObject.number_of_events - 1].instances[i] = new Instance();
+            logicJsonObject.events[logicJsonObject.number_of_events - 1].instances[i].instance_name = i;
+            logicJsonObject.events[logicJsonObject.number_of_events - 1].instances[i].neighbor = new int[0];
         }
         JC.UpdateJsonFile(logicJsonObject);
     }

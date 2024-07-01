@@ -23,6 +23,10 @@ public class ObjectDragTransform : MonoBehaviour
     void OnMouseDrag()
     {
         downTime += Time.deltaTime;
+        if(downTime<0.1)
+        {
+            return;
+        }
         //マウスカーソル及びオブジェクトのスクリーン座標を取得
         var mousex = (int)Math.Round(Input.mousePosition.x);
         var mousey = (int)Math.Round(Input.mousePosition.y);
