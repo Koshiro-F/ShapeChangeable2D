@@ -114,8 +114,11 @@ public class GameManager : MonoBehaviour
     {
         Pixel pixr1 = pixels[numr1].GetComponent<Pixel>();
         Pixel pixr2 = pixels[numr2].GetComponent<Pixel>();
-        pixr1.connected = true;
-        pixr2.connected = true;
+        if(pixr1.connected || pixr2.connected)
+        {
+            pixr1.connected = true;
+            pixr2.connected = true;
+        }
         if (!connections[numr1].Contains(numr2)) connections[numr1].Add(numr2);
         if (!connections[numr2].Contains(numr1)) connections[numr2].Add(numr1);
         else return;

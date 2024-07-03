@@ -93,14 +93,7 @@ public class Pixel : MonoBehaviour
                     }
                 }
             }
-            else if(!pixel.isCordinater && !pixel.connected && this.connected)
-            {
-                GM.RouterToRouter(this.number, pixel.number);
-            }
-            else if(!(!pixel.connected && !this.connected))
-            {
-                GM.RouterToRouter(this.number, pixel.number);
-            }
+            GM.RouterToRouter(this.number, pixel.number);
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
