@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
+using TMPro;
 
 using MyJsonControllerGenerics;
 using LogicJsonClass;
@@ -37,6 +38,16 @@ public class GameManager : MonoBehaviour
         {
             Pixel pix = pixel.GetComponent<Pixel>();
             pix.number = count;
+            //pixelに番号を表示
+            //pixelの子オブジェクトを取得
+            GameObject cd = pixel.transform.GetChild(0).gameObject;
+            GameObject gcd = cd.transform.GetChild(0).gameObject;
+            GameObject ggcd = gcd.transform.GetChild(0).gameObject;
+            GameObject gggcd = ggcd.transform.GetChild(0).gameObject;
+            //番号を表示するテキストを取得
+            TMP_Text text = gggcd.GetComponent<TMP_Text>();
+            text.text = count.ToString();
+
             if(count == 0)//最初のピクセルをコーディネータにする
             {
                 pix.isCordinater = true;
